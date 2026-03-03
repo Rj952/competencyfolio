@@ -1,0 +1,52 @@
+// CompetencyFolio v3 Database Schema
+// Supports: Vercel Postgres, Supabase, PlanetScale, or any PostgreSQL
+// For local dev: switch provider to "sqlite" and url to "file:./dev.db"
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  portfolio     Portfolio?
+  shareLinks    ShareLink[]
+}
+
+model Portfolio {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data          Json     // Stores the entire portfolio JSON
+  version       Int      @default(3)
+  lastSavedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ShareLink {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug          String   @unique
+  isActive      Boolean  @default(true)
+  viewCount     Int      @default(0)
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([slug])
+  @@index([userId])
+}

@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d6d3d1;
+    border-radius: 3px;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #44403c;
+  }
+
+  /* Range input styling */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #e7e5e4;
+    outline: none;
+  }
+  .dark input[type="range"] {
+    background: #44403c;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6 shadow-card dark:shadow-card-dark transition-all duration-200;
+  }
+
+  .card-hover:hover {
+    @apply shadow-card-md dark:shadow-glow;
+  }
+
+  .input-field {
+    @apply w-full px-3.5 py-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-sm outline-none transition-colors focus:border-brand-600 dark:focus:border-brand-400 placeholder:text-stone-400 dark:placeholder:text-stone-500;
+  }
+
+  .textarea-field {
+    @apply input-field min-h-[80px] resize-y;
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-lg bg-brand-700 dark:bg-brand-500 text-white font-semibold text-sm cursor-pointer border-none hover:bg-brand-800 dark:hover:bg-brand-400 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-semibold text-sm cursor-pointer border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors;
+  }
+
+  .label {
+    @apply block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-1.5 uppercase tracking-wider;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .heading-display {
+    font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+    @apply font-bold tracking-tight;
+  }
+}
