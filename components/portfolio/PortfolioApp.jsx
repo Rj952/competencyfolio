@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer, Legend, AreaChart, Area, XAxis, YAxis,
@@ -586,9 +587,14 @@ export default function PortfolioApp({
           )}
           <div style={s.navItem(false)} onClick={() => setDarkMode(!darkMode)}>{!collapsed && <span style={{ fontSize: 12 }}>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>}<span style={{ fontSize: 14 }}>{darkMode ? '☀️' : '🌙'}</span></div>
           <div style={s.navItem(false)} onClick={onShare}>{!collapsed && <span style={{ fontSize: 12 }}>Share Portfolio</span>}<span style={{ fontSize: 14 }}>🔗</span></div>
-          <div style={s.navItem(false)} onClick={onExport}>{!collapsed && <span style={{ fontSize: 12 }}>Export JSON</span>}<span style={{ fontSize: 14 }}>↓</span></div>
-          <div style={s.navItem(false)} onClick={() => importRef.current?.click()}>{!collapsed && <span style={{ fontSize: 12 }}>Import JSON</span>}<span style={{ fontSize: 14 }}>↑</span></div>
-          <input ref={importRef} type="file" accept=".json" hidden onChange={onImport} />
+          {user?.role === 'admin' && (
+            <>
+              <Link href="/admin" style={{ ...s.navItem(false), textDecoration: 'none', color: 'inherit' }}>{!collapsed && <span style={{ fontSize: 12, color: T.coral || '#f97316' }}>Admin Panel</span>}<span style={{ fontSize: 14 }}>⚙️</span></Link>
+              <div style={s.navItem(false)} onClick={onExport}>{!collapsed && <span style={{ fontSize: 12 }}>Export JSON</span>}<span style={{ fontSize: 14 }}>↓</span></div>
+              <div style={s.navItem(false)} onClick={() => importRef.current?.click()}>{!collapsed && <span style={{ fontSize: 12 }}>Import JSON</span>}<span style={{ fontSize: 14 }}>↑</span></div>
+              <input ref={importRef} type="file" accept=".json" hidden onChange={onImport} />
+            </>
+          )}
           <div style={{ ...s.navItem(false), color: T.rose }} onClick={onLogout}>{!collapsed && <span style={{ fontSize: 12 }}>Sign Out</span>}<span style={{ fontSize: 14 }}>⏻</span></div>
         </div>
       </aside>

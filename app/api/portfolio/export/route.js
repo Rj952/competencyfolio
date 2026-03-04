@@ -9,6 +9,11 @@ export async function GET() {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
+  // Only admins can export JSON
+  if (session.role !== 'admin') {
+    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+  }
+
   try {
     const portfolio = await prisma.portfolio.findUnique({
       where: { userId: session.userId },
