@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/db';
-import { createToken, setSessionCookie } from '@/lib/auth';
+import { createToken, setSessionCookie, isAdminEmail } from '@/lib/auth';
 import { getDefaultPortfolio } from '@/lib/constants';
 
 export async function POST(request) {
@@ -25,12 +25,16 @@ export async function POST(request) {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
 
+    // Auto-promote to admin if email matches ADMIN_EMAIL
+    const role = isAdminEmail(email) ? 'admin' : 'user';
+
     // Create user with default portfolio
     const user = await prisma.user.create({
       data: {
         name,
         email,
         passwordHash,
+        role,
         portfolio: {
           create: {
             data: getDefaultPortfolio(),
@@ -40,12 +44,12 @@ export async function POST(request) {
       },
     });
 
-    // Create JWT and set cookie
-    const token = await createToken({ userId: user.id, email: user.email, name: user.name });
+    // Create JWT and set cookie (include role)
+    const token = await createToken({ userId: user.id, email: user.email, name: user.name, role: user.role });
     await setSessionCookie(token);
 
     return NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
     console.error('Registration error:', error);

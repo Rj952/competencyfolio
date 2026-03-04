@@ -80,8 +80,8 @@ export default function HomePage() {
             Everything you need to prove competence
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Research-driven features that no other portfolio platform offers — built by an instructional
-            designer with 30+ years of education experience.
+            Research-driven features that no other portfolio platform offers — designed by
+            Dr. Rohan Jowallah, Educator and AI Consultant with 30+ years of experience.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">

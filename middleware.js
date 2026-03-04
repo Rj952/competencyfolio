@@ -8,19 +8,33 @@ const secret = new TextEncoder().encode(
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Protect dashboard routes
-  if (pathname.startsWith('/dashboard')) {
+  // Protect dashboard and admin routes
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
     const token = request.cookies.get('cf_session')?.value;
 
     if (!token) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      }
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
     try {
-      await jwtVerify(token, secret);
+      const { payload } = await jwtVerify(token, secret);
+
+      // Admin routes require admin role
+      if ((pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) && payload.role !== 'admin') {
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+        }
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+
       return NextResponse.next();
     } catch {
-      const response = NextResponse.redirect(new URL('/login', request.url));
+      const response = pathname.startsWith('/api/')
+        ? NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+        : NextResponse.redirect(new URL('/login', request.url));
       response.cookies.delete('cf_session');
       return response;
     }
@@ -43,5 +57,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login', '/register'],
+  matcher: ['/dashboard/:path*', '/admin/:path*', '/api/admin/:path*', '/login', '/register'],
 };

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/db';
-import { createToken, setSessionCookie } from '@/lib/auth';
+import { createToken, setSessionCookie, isAdminEmail } from '@/lib/auth';
 
 export async function POST(request) {
   try {
@@ -21,11 +21,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const token = await createToken({ userId: user.id, email: user.email, name: user.name });
+    // Auto-promote to admin on login if ADMIN_EMAIL matches (handles existing users)
+    if (isAdminEmail(email) && user.role !== 'admin') {
+      await prisma.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+      user.role = 'admin';
+    }
+
+    const token = await createToken({ userId: user.id, email: user.email, name: user.name, role: user.role });
     await setSessionCookie(token);
 
     return NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
     console.error('Login error:', error);

@@ -2,7 +2,7 @@
 
 **Evidence-Based Professional Portfolio Built on the WEF 2030 Skills Framework**
 
-Created by **Dr. Rohan Jowallah** — Senior Instructional Designer, Author of *AI, Pedagogy and Inclusion* (2025)
+Created by **Dr. Rohan Jowallah** — Educator, AI Consultant, and Author of *AI, Pedagogy and Inclusion* (2025)
 
 ---
 

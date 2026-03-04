@@ -1,0 +1,27 @@
+{
+  "name": "CompetencyFolio — Evidence-Based Professional Portfolio",
+  "short_name": "CompetencyFolio",
+  "description": "Map skills to WEF 2030 standards. Build verifiable evidence. Earn digital badges. Designed by Dr. Rohan Jowallah.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f5f5f4",
+  "theme_color": "#115e59",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en"
+}
