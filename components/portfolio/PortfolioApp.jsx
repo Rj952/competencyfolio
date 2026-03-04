@@ -37,29 +37,29 @@ export default function PortfolioApp({
     onDataChange(next);
   }, [data, onDataChange]);
 
-  // Theme colors
+  // Theme colors — Caribbean palette
   const T = darkMode ? {
     bg: '#0c0a09', surface: '#1c1917', surfaceAlt: '#292524', surfaceHover: '#44403c',
     ink: '#fafaf9', inkMuted: '#a8a29e', inkLight: '#78716c',
-    accent: '#f59e0b', teal: '#2dd4bf', indigo: '#818cf8', rose: '#fb7185',
-    emerald: '#34d399', amber: '#fbbf24', violet: '#a78bfa', sky: '#38bdf8',
+    accent: '#14b8a6', teal: '#2dd4bf', indigo: '#22d3ee', rose: '#fb923c',
+    emerald: '#34d399', amber: '#fbbf24', violet: '#a78bfa', sky: '#67e8f9',
     border: '#44403c', borderLight: '#292524',
     shadow: '0 1px 2px rgba(0,0,0,0.3)', shadowMd: '0 4px 16px rgba(0,0,0,0.4)',
-    gradientHero: 'linear-gradient(135deg, #f59e0b 0%, #92400e 100%)',
-    accentSoft: 'rgba(245,158,11,0.1)', violetSoft: 'rgba(167,139,250,0.1)',
-    indigoSoft: 'rgba(129,140,248,0.1)', emeraldSoft: 'rgba(52,211,153,0.1)',
+    gradientHero: 'linear-gradient(135deg, #0f766e 0%, #0e7490 100%)',
+    accentSoft: 'rgba(20,184,166,0.12)', violetSoft: 'rgba(167,139,250,0.1)',
+    indigoSoft: 'rgba(34,211,238,0.1)', emeraldSoft: 'rgba(52,211,153,0.1)',
     amberSoft: 'rgba(251,191,36,0.1)',
   } : {
-    bg: '#f8f7f4', surface: '#ffffff', surfaceAlt: '#f2f0eb', surfaceHover: '#eae8e3',
+    bg: '#f8f7f4', surface: '#ffffff', surfaceAlt: '#f0fdfa', surfaceHover: '#ccfbf1',
     ink: '#1c1917', inkMuted: '#78716c', inkLight: '#a8a29e',
-    accent: '#b45309', teal: '#0d9488', indigo: '#4f46e5', rose: '#be123c',
-    emerald: '#059669', amber: '#d97706', violet: '#7c3aed', sky: '#0284c7',
+    accent: '#0f766e', teal: '#0d9488', indigo: '#0e7490', rose: '#ea580c',
+    emerald: '#059669', amber: '#f97316', violet: '#7c3aed', sky: '#0891b2',
     border: '#e7e5e4', borderLight: '#f5f5f4',
     shadow: '0 1px 2px rgba(28,25,23,0.04)', shadowMd: '0 4px 16px rgba(28,25,23,0.06)',
-    gradientHero: 'linear-gradient(135deg, #1c1917 0%, #44403c 100%)',
-    accentSoft: 'rgba(180,83,9,0.07)', violetSoft: 'rgba(124,58,237,0.06)',
-    indigoSoft: 'rgba(79,70,229,0.06)', emeraldSoft: 'rgba(5,150,105,0.06)',
-    amberSoft: 'rgba(217,119,6,0.06)',
+    gradientHero: 'linear-gradient(135deg, #115e59 0%, #0e7490 100%)',
+    accentSoft: 'rgba(15,118,110,0.07)', violetSoft: 'rgba(124,58,237,0.06)',
+    indigoSoft: 'rgba(14,116,144,0.06)', emeraldSoft: 'rgba(5,150,105,0.06)',
+    amberSoft: 'rgba(249,115,22,0.06)',
   };
 
   const strengthColor = (s) => [T.inkLight, T.rose, T.amber, T.teal, T.accent, T.emerald][s] || T.inkLight;
