@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import InstallPrompt from '@/components/InstallPrompt';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer, Legend, AreaChart, Area, XAxis, YAxis,
@@ -23,8 +24,18 @@ export default function PortfolioApp({
   const [tab, setTab] = useState('dashboard');
   const [darkMode, setDarkMode] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const fileRef = useRef(null);
   const importRef = useRef(null);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const portfolioScore = useMemo(() => calcPortfolioStrength(data), [data]);
 
@@ -74,8 +85,8 @@ export default function PortfolioApp({
     btn: (v) => ({ padding: '9px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, background: v === 'primary' ? T.accent : T.surfaceAlt, color: v === 'primary' ? '#fff' : T.ink, transition: 'all 0.15s' }),
     label: { display: 'block', fontSize: 12, fontWeight: 600, color: T.inkMuted, marginBottom: 5, letterSpacing: '0.02em', textTransform: 'uppercase' },
     tag: (color) => ({ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: `${color}15`, color, border: `1px solid ${color}25` }),
-    grid2: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 },
-    grid3: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 },
+    grid2: { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 12 : 16 },
+    grid3: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: isMobile ? 12 : 16 },
     navItem: (active) => ({
       display: 'flex', alignItems: 'center', gap: 10, padding: collapsed ? '10px 0' : '9px 14px',
       borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: active ? 600 : 400,
@@ -560,47 +571,120 @@ export default function PortfolioApp({
     }
   };
 
+  // ─── SIDEBAR CONTENT (shared between desktop and mobile) ──
+  const sidebarContent = (forMobile = false) => (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 14, borderBottom: `1px solid ${T.border}` }}>
+        <div><div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 16, color: T.accent, letterSpacing: '-0.03em' }}>CompetencyFolio</div>
+          <div style={{ fontSize: 9, color: T.inkLight, letterSpacing: '0.08em', textTransform: 'uppercase' }}>v3 · WEF 2030</div></div>
+        {!forMobile && <button onClick={() => setCollapsed(!collapsed)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.inkMuted, fontSize: 14, padding: 4 }}>{collapsed ? '▸' : '◂'}</button>}
+        {forMobile && <button onClick={() => setMobileMenuOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.inkMuted, fontSize: 20, padding: 4 }}>✕</button>}
+      </div>
+
+      {user && <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 12, padding: '0 4px' }}>Welcome, <strong style={{ color: T.ink }}>{user.name?.split(' ')[0]}</strong></div>}
+
+      {TABS.map(t => <div key={t.id} style={s.navItem(tab === t.id)} onClick={() => { setTab(t.id); if (forMobile) setMobileMenuOpen(false); }}><span style={{ fontSize: 14, width: 20, textAlign: 'center' }}>{t.icon}</span><span>{t.label}</span></div>)}
+
+      <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div style={{ fontSize: 10, color: saveStatus === 'saved' ? T.emerald : saveStatus === 'saving' ? T.amber : T.rose, padding: '4px 14px', marginBottom: 4 }}>
+          {saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'saving' ? '⟳ Saving...' : '✗ Save error'}
+          {lastSaved && saveStatus === 'saved' && <span style={{ color: T.inkLight, marginLeft: 4 }}>{lastSaved.toLocaleTimeString()}</span>}
+        </div>
+        <div style={s.navItem(false)} onClick={() => setDarkMode(!darkMode)}><span style={{ fontSize: 12 }}>{darkMode ? 'Light Mode' : 'Dark Mode'}</span><span style={{ fontSize: 14 }}>{darkMode ? '☀️' : '🌙'}</span></div>
+        <div style={s.navItem(false)} onClick={onShare}><span style={{ fontSize: 12 }}>Share Portfolio</span><span style={{ fontSize: 14 }}>🔗</span></div>
+        <InstallPrompt variant="sidebar" collapsed={false} />
+        {user?.role === 'admin' && (
+          <>
+            <Link href="/admin" style={{ ...s.navItem(false), textDecoration: 'none', color: 'inherit' }}><span style={{ fontSize: 12, color: T.coral || '#f97316' }}>Admin Panel</span><span style={{ fontSize: 14 }}>⚙️</span></Link>
+            <div style={s.navItem(false)} onClick={onExport}><span style={{ fontSize: 12 }}>Export JSON</span><span style={{ fontSize: 14 }}>↓</span></div>
+            <div style={s.navItem(false)} onClick={() => importRef.current?.click()}><span style={{ fontSize: 12 }}>Import JSON</span><span style={{ fontSize: 14 }}>↑</span></div>
+            <input ref={importRef} type="file" accept=".json" hidden onChange={onImport} />
+          </>
+        )}
+        <div style={{ ...s.navItem(false), color: T.rose }} onClick={onLogout}><span style={{ fontSize: 12 }}>Sign Out</span><span style={{ fontSize: 14 }}>⏻</span></div>
+      </div>
+    </>
+  );
+
   // ─── LAYOUT ──────────────────────────────────────────────
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: T.bg, color: T.ink, fontFamily: "'DM Sans', sans-serif", fontSize: 14, transition: 'background 0.3s, color 0.3s' }}>
       <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-      {/* Sidebar */}
-      <aside style={{ width: collapsed ? 60 : 220, minWidth: collapsed ? 60 : 220, background: T.surface, borderRight: `1px solid ${T.border}`, padding: collapsed ? '16px 8px' : '20px 16px', display: 'flex', flexDirection: 'column', gap: 2, transition: 'all 0.25s ease', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto', boxShadow: T.shadow }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 14, borderBottom: `1px solid ${T.border}` }}>
-          {!collapsed && <div><div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 16, color: T.accent, letterSpacing: '-0.03em' }}>CompetencyFolio</div>
-            <div style={{ fontSize: 9, color: T.inkLight, letterSpacing: '0.08em', textTransform: 'uppercase' }}>v3 · WEF 2030</div></div>}
-          <button onClick={() => setCollapsed(!collapsed)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.inkMuted, fontSize: 14, padding: 4 }}>{collapsed ? '▸' : '◂'}</button>
+      {/* Mobile Header */}
+      {isMobile && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, height: 56, background: T.surface,
+          borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', padding: '0 16px', zIndex: 1000, boxShadow: T.shadow,
+        }}>
+          <button onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.ink, fontSize: 22, padding: 4 }}>☰</button>
+          <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 15, color: T.accent }}>CompetencyFolio</div>
+          <div style={{ fontSize: 10, color: saveStatus === 'saved' ? T.emerald : saveStatus === 'saving' ? T.amber : T.rose, fontWeight: 600 }}>
+            {saveStatus === 'saved' ? '✓' : saveStatus === 'saving' ? '⟳' : '✗'}
+          </div>
         </div>
+      )}
 
-        {!collapsed && user && <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 12, padding: '0 4px' }}>Welcome, <strong style={{ color: T.ink }}>{user.name?.split(' ')[0]}</strong></div>}
-
-        {TABS.map(t => <div key={t.id} style={s.navItem(tab === t.id)} onClick={() => setTab(t.id)}><span style={{ fontSize: 14, width: 20, textAlign: 'center' }}>{t.icon}</span>{!collapsed && <span>{t.label}</span>}</div>)}
-
-        <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Save status */}
-          {!collapsed && (
-            <div style={{ fontSize: 10, color: saveStatus === 'saved' ? T.emerald : saveStatus === 'saving' ? T.amber : T.rose, padding: '4px 14px', marginBottom: 4 }}>
-              {saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'saving' ? '⟳ Saving...' : '✗ Save error'}
-              {lastSaved && saveStatus === 'saved' && <span style={{ color: T.inkLight, marginLeft: 4 }}>{lastSaved.toLocaleTimeString()}</span>}
-            </div>
-          )}
-          <div style={s.navItem(false)} onClick={() => setDarkMode(!darkMode)}>{!collapsed && <span style={{ fontSize: 12 }}>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>}<span style={{ fontSize: 14 }}>{darkMode ? '☀️' : '🌙'}</span></div>
-          <div style={s.navItem(false)} onClick={onShare}>{!collapsed && <span style={{ fontSize: 12 }}>Share Portfolio</span>}<span style={{ fontSize: 14 }}>🔗</span></div>
-          {user?.role === 'admin' && (
-            <>
-              <Link href="/admin" style={{ ...s.navItem(false), textDecoration: 'none', color: 'inherit' }}>{!collapsed && <span style={{ fontSize: 12, color: T.coral || '#f97316' }}>Admin Panel</span>}<span style={{ fontSize: 14 }}>⚙️</span></Link>
-              <div style={s.navItem(false)} onClick={onExport}>{!collapsed && <span style={{ fontSize: 12 }}>Export JSON</span>}<span style={{ fontSize: 14 }}>↓</span></div>
-              <div style={s.navItem(false)} onClick={() => importRef.current?.click()}>{!collapsed && <span style={{ fontSize: 12 }}>Import JSON</span>}<span style={{ fontSize: 14 }}>↑</span></div>
-              <input ref={importRef} type="file" accept=".json" hidden onChange={onImport} />
-            </>
-          )}
-          <div style={{ ...s.navItem(false), color: T.rose }} onClick={onLogout}>{!collapsed && <span style={{ fontSize: 12 }}>Sign Out</span>}<span style={{ fontSize: 14 }}>⏻</span></div>
+      {/* Mobile Drawer Overlay */}
+      {isMobile && mobileMenuOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 2000 }} onClick={() => setMobileMenuOpen(false)}>
+          <aside style={{
+            width: 280, height: '100%', background: T.surface, padding: '20px 16px',
+            display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto',
+            boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
+          }} onClick={(e) => e.stopPropagation()}>
+            {sidebarContent(true)}
+          </aside>
         </div>
-      </aside>
+      )}
+
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <aside style={{
+          width: collapsed ? 60 : 220, minWidth: collapsed ? 60 : 220,
+          background: T.surface, borderRight: `1px solid ${T.border}`,
+          padding: collapsed ? '16px 8px' : '20px 16px',
+          display: 'flex', flexDirection: 'column', gap: 2,
+          transition: 'all 0.25s ease', position: 'sticky', top: 0,
+          height: '100vh', overflowY: 'auto', boxShadow: T.shadow,
+        }}>
+          {/* Desktop sidebar header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 14, borderBottom: `1px solid ${T.border}` }}>
+            {!collapsed && <div><div style={{ fontFamily: "'Fraunces', serif", fontWeight: 800, fontSize: 16, color: T.accent, letterSpacing: '-0.03em' }}>CompetencyFolio</div>
+              <div style={{ fontSize: 9, color: T.inkLight, letterSpacing: '0.08em', textTransform: 'uppercase' }}>v3 · WEF 2030</div></div>}
+            <button onClick={() => setCollapsed(!collapsed)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.inkMuted, fontSize: 14, padding: 4 }}>{collapsed ? '▸' : '◂'}</button>
+          </div>
+
+          {!collapsed && user && <div style={{ fontSize: 12, color: T.inkMuted, marginBottom: 12, padding: '0 4px' }}>Welcome, <strong style={{ color: T.ink }}>{user.name?.split(' ')[0]}</strong></div>}
+
+          {TABS.map(t => <div key={t.id} style={s.navItem(tab === t.id)} onClick={() => setTab(t.id)}><span style={{ fontSize: 14, width: 20, textAlign: 'center' }}>{t.icon}</span>{!collapsed && <span>{t.label}</span>}</div>)}
+
+          <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {!collapsed && (
+              <div style={{ fontSize: 10, color: saveStatus === 'saved' ? T.emerald : saveStatus === 'saving' ? T.amber : T.rose, padding: '4px 14px', marginBottom: 4 }}>
+                {saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'saving' ? '⟳ Saving...' : '✗ Save error'}
+                {lastSaved && saveStatus === 'saved' && <span style={{ color: T.inkLight, marginLeft: 4 }}>{lastSaved.toLocaleTimeString()}</span>}
+              </div>
+            )}
+            <div style={s.navItem(false)} onClick={() => setDarkMode(!darkMode)}>{!collapsed && <span style={{ fontSize: 12 }}>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>}<span style={{ fontSize: 14 }}>{darkMode ? '☀️' : '🌙'}</span></div>
+            <div style={s.navItem(false)} onClick={onShare}>{!collapsed && <span style={{ fontSize: 12 }}>Share Portfolio</span>}<span style={{ fontSize: 14 }}>🔗</span></div>
+            <InstallPrompt variant="sidebar" collapsed={collapsed} />
+            {user?.role === 'admin' && (
+              <>
+                <Link href="/admin" style={{ ...s.navItem(false), textDecoration: 'none', color: 'inherit' }}>{!collapsed && <span style={{ fontSize: 12, color: T.coral || '#f97316' }}>Admin Panel</span>}<span style={{ fontSize: 14 }}>⚙️</span></Link>
+                <div style={s.navItem(false)} onClick={onExport}>{!collapsed && <span style={{ fontSize: 12 }}>Export JSON</span>}<span style={{ fontSize: 14 }}>↓</span></div>
+                <div style={s.navItem(false)} onClick={() => importRef.current?.click()}>{!collapsed && <span style={{ fontSize: 12 }}>Import JSON</span>}<span style={{ fontSize: 14 }}>↑</span></div>
+                <input ref={importRef} type="file" accept=".json" hidden onChange={onImport} />
+              </>
+            )}
+            <div style={{ ...s.navItem(false), color: T.rose }} onClick={onLogout}>{!collapsed && <span style={{ fontSize: 12 }}>Sign Out</span>}<span style={{ fontSize: 14 }}>⏻</span></div>
+          </div>
+        </aside>
+      )}
 
       {/* Main */}
-      <main style={{ flex: 1, padding: '28px 36px', maxWidth: 960, margin: '0 auto' }}>
+      <main style={{ flex: 1, padding: isMobile ? '72px 16px 24px' : '28px 36px', maxWidth: 960, margin: '0 auto', width: '100%', overflow: 'hidden' }}>
         {renderTab()}
         <div style={{ textAlign: 'center', padding: '32px 0 16px', borderTop: `1px solid ${T.borderLight}`, marginTop: 40 }}>
           <p style={{ fontSize: 10, color: T.inkLight }}>COMPETENCYFOLIO v3 · Created by Dr. Rohan Jowallah · WEF 2030 · CARE · ACRE · CRAFT</p>

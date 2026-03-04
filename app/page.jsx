@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import InstallPrompt from '@/components/InstallPrompt';
 
 export default function HomePage() {
   const features = [
@@ -15,50 +18,48 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
+      <nav className="flex items-center justify-between px-4 sm:px-8 py-5 max-w-6xl mx-auto">
         <div>
-          <span className="heading-display text-xl text-brand-700 tracking-tight">CompetencyFolio</span>
-          <span className="text-[10px] text-stone-400 ml-2 uppercase tracking-widest">v3</span>
+          <span className="heading-display text-lg sm:text-xl text-brand-700 tracking-tight">CompetencyFolio</span>
+          <span className="text-[10px] text-stone-400 ml-2 uppercase tracking-widest hidden sm:inline">v3</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link href="/login" className="text-sm text-stone-600 hover:text-stone-900 transition-colors font-medium">
             Sign In
           </Link>
-          <Link href="/register" className="btn-primary text-sm px-5 py-2 rounded-lg inline-block no-underline">
-            Get Started Free
+          <Link href="/register" className="btn-primary text-xs sm:text-sm px-3 sm:px-5 py-2 rounded-lg inline-block no-underline">
+            Get Started
           </Link>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-8 pt-16 pb-24">
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-16 sm:pb-24">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-6 tracking-wide">
             <span>🌴</span> Built on WEF 2030 Skills Framework
           </div>
-          <h1 className="heading-display text-5xl md:text-6xl text-stone-900 leading-[1.1] mb-6">
+          <h1 className="heading-display text-3xl sm:text-5xl md:text-6xl text-stone-900 leading-[1.1] mb-6">
             Your evidence-based<br />
             <span className="text-brand-600">professional portfolio</span>
           </h1>
-          <p className="text-lg text-stone-500 leading-relaxed mb-8 max-w-xl">
+          <p className="text-base sm:text-lg text-stone-500 leading-relaxed mb-8 max-w-xl">
             Map skills to global standards. Build verifiable evidence. Earn digital badges.
             CompetencyFolio aligns your professional story with what 85% of employers now demand:
             demonstrated skills, not just credentials.
           </p>
-          <div className="flex items-center gap-4">
-            <Link href="/register" className="btn-primary text-base px-8 py-3 rounded-xl inline-block no-underline">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <Link href="/register" className="btn-primary text-sm sm:text-base px-6 sm:px-8 py-3 rounded-xl inline-block no-underline">
               Start Building Your Portfolio →
             </Link>
-            <Link href="/share/demo" className="btn-secondary text-base px-6 py-3 rounded-xl inline-block no-underline">
-              View Demo
-            </Link>
+            <InstallPrompt variant="banner" />
           </div>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-gradient-to-r from-brand-800 via-brand-700 to-sea-700 text-white py-12">
-        <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="bg-gradient-to-r from-brand-800 via-brand-700 to-sea-700 text-white py-10 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {[
             { num: "85%", label: "of employers use skills-based hiring" },
             { num: "10", label: "WEF 2030 core skill clusters" },
@@ -66,27 +67,27 @@ export default function HomePage() {
             { num: "5", label: "digital badge achievement levels" },
           ].map(s => (
             <div key={s.num} className="text-center">
-              <div className="heading-display text-3xl text-coral-300 mb-1">{s.num}</div>
-              <div className="text-sm text-brand-200">{s.label}</div>
+              <div className="heading-display text-2xl sm:text-3xl text-coral-300 mb-1">{s.num}</div>
+              <div className="text-xs sm:text-sm text-brand-200">{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Features */}
-      <section className="max-w-6xl mx-auto px-8 py-20">
-        <div className="text-center mb-14">
-          <h2 className="heading-display text-3xl text-stone-900 mb-3">
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="heading-display text-2xl sm:text-3xl text-stone-900 mb-3">
             Everything you need to prove competence
           </h2>
-          <p className="text-stone-500 max-w-lg mx-auto">
+          <p className="text-stone-500 max-w-lg mx-auto text-sm sm:text-base">
             Research-driven features that no other portfolio platform offers — designed by
             Dr. Rohan Jowallah, Educator and AI Consultant with 30+ years of experience.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {features.map(f => (
-            <div key={f.title} className="card card-hover p-5 group">
+            <div key={f.title} className="card card-hover p-4 sm:p-5 group">
               <div className={`text-2xl mb-3 ${f.color}`}>{f.icon}</div>
               <h3 className="font-bold text-sm text-stone-900 mb-1.5 group-hover:text-brand-700 transition-colors">{f.title}</h3>
               <p className="text-xs text-stone-500 leading-relaxed">{f.desc}</p>
@@ -96,10 +97,10 @@ export default function HomePage() {
       </section>
 
       {/* Frameworks */}
-      <section className="bg-brand-50/50 py-16">
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="card p-6 border-t-4 border-t-brand-500">
+      <section className="bg-brand-50/50 py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="card p-5 sm:p-6 border-t-4 border-t-brand-500">
               <h3 className="heading-display text-lg text-brand-700 mb-2">🌺 CARE Framework</h3>
               <p className="text-sm text-stone-500 mb-4">Guided professional reflection in four phases</p>
               <div className="space-y-2">
@@ -109,7 +110,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="card p-6 border-t-4 border-t-sea-500">
+            <div className="card p-5 sm:p-6 border-t-4 border-t-sea-500">
               <h3 className="heading-display text-lg text-sea-700 mb-2">🌊 ACRE Quality Lens</h3>
               <p className="text-sm text-stone-500 mb-4">Evaluate evidence quality across four dimensions</p>
               <div className="space-y-2">
@@ -119,7 +120,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="card p-6 border-t-4 border-t-coral-500">
+            <div className="card p-5 sm:p-6 border-t-4 border-t-coral-500">
               <h3 className="heading-display text-lg text-coral-600 mb-2">🌅 CRAFT Prompt Design</h3>
               <p className="text-sm text-stone-500 mb-4">Structured approach to AI interaction</p>
               <div className="space-y-2">
@@ -135,21 +136,24 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="max-w-6xl mx-auto px-8 py-20 text-center">
-        <h2 className="heading-display text-3xl text-stone-900 mb-4">
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 py-14 sm:py-20 text-center">
+        <h2 className="heading-display text-2xl sm:text-3xl text-stone-900 mb-4">
           Ready to build your evidence-based portfolio?
         </h2>
-        <p className="text-stone-500 mb-8 max-w-md mx-auto">
+        <p className="text-stone-500 mb-8 max-w-md mx-auto text-sm sm:text-base">
           Join professionals mapping their skills to WEF 2030 standards and demonstrating competence with evidence, not just claims.
         </p>
-        <Link href="/register" className="btn-primary text-base px-10 py-3.5 rounded-xl inline-block no-underline">
-          Create Your Portfolio →
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Link href="/register" className="btn-primary text-sm sm:text-base px-8 sm:px-10 py-3.5 rounded-xl inline-block no-underline">
+            Create Your Portfolio →
+          </Link>
+          <InstallPrompt variant="banner" />
+        </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-stone-200 py-8">
-        <div className="max-w-6xl mx-auto px-8 flex items-center justify-between text-xs text-stone-400">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-400">
           <div>
             <span className="heading-display text-sm text-brand-600">CompetencyFolio v3</span>
             <span className="ml-2">Created by Dr. Rohan Jowallah</span>
